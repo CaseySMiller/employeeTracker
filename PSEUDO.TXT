@@ -1,0 +1,73 @@
+>install npm packages
+
+set up console.tables?????
+
+use inquire to set up cli to promt user
+    view all departments
+        console.table with
+            dept names 
+            dept ids
+    view all roles
+        console.table with
+            job title
+            role id
+            owning dept
+            salary
+    view all employees
+        console.table with
+            employee id
+            first name
+            last name
+            job title
+            department
+            salary
+            manager
+    add a department
+        inquirer to prompt for name of dept
+    add a role
+        inquirer to prompt for role's
+            name
+            salary
+            department
+    add an employee
+        inquirer to prompt for employee's
+            first name
+            last name
+            role
+            manager
+    update an employee role
+        inquirer to select employee from list
+            select new role from list
+
+set up db schema
+    department
+        id
+            int
+            primary key
+        name
+            varchar30
+    role
+        id
+            int
+            primary key
+        title
+            varchar30
+        salary
+            decimal
+        department id
+            int
+            foriegn key to department id
+    employee
+        id
+            int
+            primary key
+        first name
+            varchar30
+        last name
+            varchar30
+        role id
+            int
+            reference to role.id
+        manager id
+            int
+            reference to employee.id of manager - null if none
