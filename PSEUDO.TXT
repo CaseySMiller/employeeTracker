@@ -39,14 +39,14 @@ use inquire to set up cli to promt user
         inquirer to select employee from list
             select new role from list
 
-set up db schema
-    department
+>>set up db schema
+    >>department
         id
             int
             primary key
         name
             varchar30
-    role
+    >>role
         id
             int
             primary key
@@ -57,7 +57,7 @@ set up db schema
         department id
             int
             foriegn key to department id
-    employee
+    >>employee
         id
             int
             primary key
@@ -71,3 +71,5 @@ set up db schema
         manager id
             int
             reference to employee.id of manager - null if none
+
+>>seed db
