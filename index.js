@@ -16,6 +16,7 @@ const db = mysql.createConnection(
 askStuff();
 // function to ask user what to do
 function askStuff() {
+    console.clear();
     inquirer
         .prompt([
             {
@@ -29,7 +30,8 @@ function askStuff() {
                     "Add a department",
                     "Add a role",
                     "Add an employee",
-                    "Update an employee's role"
+                    "Update an employee's role",
+                    "Quit"
                 ]
             }
         ])
@@ -64,9 +66,35 @@ function askStuff() {
                     console.log(`you answered ${response.operation}`);
                     updateEmpRole();
                     break;
-            }
+                case "Quit":
+                    process.exit();
+            };
         });
 };
+// function to ask what to do next
+function whatNext() {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: 'What would you like to do next?',
+                name: 'doNext',
+                choices: [
+                    'Back to main menu',
+                    'quit'
+                ]
+            }
+        ])
+        .then((res) => {
+            if (res.doNext == 'Back to main menu') {
+                askStuff();
+            } else {
+                process.exit();
+            }
+        }
+
+        )
+}
 // function to view departments
 function viewDepts() {
 
@@ -76,6 +104,7 @@ function viewDepts() {
         // log with cTable formatting
         const table = cTable.getTable(res);
         console.log(table);
+        whatNext();
     });
 };
 
@@ -87,12 +116,22 @@ function viewRoles() {
         // log with cTable formatting
         const table = cTable.getTable(res);
         console.log(table);
+        whatNext();
     });
 };
+
 // function to view employees
 function viewEmps() {
-    console.log('ayup');
+    db.query(`SELECT employees.id, first_name, last_name, title, department_name, salary, manager_id FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id;`, (err, res) => {
+        console.clear();
+        console.log('\n', 'All Employees:', '\n');
+        // log with cTable formatting
+        const table = cTable.getTable(res);
+        console.log(table);
+        whatNext();
+    });
 };
+
 // funtion to add department
 function addDept() {
     console.log('ayup');
