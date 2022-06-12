@@ -26,13 +26,15 @@ set up console.tables?????
             department
             salary
             manager
-    add a department
+    >>add a department
         inquirer to prompt for name of dept
     add a role
         inquirer to prompt for role's
             name
             salary
             department
+                make an array of dept names
+                inquire list of dept names
     add an employee
         inquirer to prompt for employee's
             first name
@@ -82,3 +84,4 @@ set up console.tables?????
 icebox
     make add stuff unique only
     make not null work on departments
+    make nan not work on add role

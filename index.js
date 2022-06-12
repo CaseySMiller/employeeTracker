@@ -157,8 +157,55 @@ function addDept() {
 
 // funtion to add a role
 function addRole() {
-    console.log('ayup');
+    const deptArray = [];
+    // let newDeptId = 0;
+
+    db.query("SELECT * FROM departments;", (err, res) => {
+        if(err) throw err;
+        // push dept names to an array
+        res.forEach(obj => {
+            deptArray.push(obj.department_name);
+        })
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'Enter the new role name',
+                name: 'newName'
+            },
+            {
+                type: 'number',
+                message: 'Enter the annual salary for the new role',
+                name: 'newSalary'
+            },
+            {
+                type: 'list',
+                message: 'Choose a department for the new role',
+                choices: deptArray,
+                name: 'deptName'
+            }
+        ])
+        .then(async function f(res) {
+                let promise = new Promise ((resolve, reject) => {
+                    db.query(`SELECT id FROM departments WHERE department_name = "${res.deptName}"`, (err, res) => {
+                        if(err) throw err;
+                        resolve(res[0].id);
+                    })
+                });
+
+                newDeptId = await promise;
+                console.log (newDeptId);
+                db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [res.newName, res.newSalary, newDeptId], (err, res) => {
+                    if (err) throw err;
+                    console.log('Add role successful');
+                    whatNext();
+                })
+
+            }
+
+        )
+    })
 };
+
 // function to add employee
 function addEmp() {
     console.log('ayup');
