@@ -134,8 +134,27 @@ function viewEmps() {
 
 // funtion to add department
 function addDept() {
-    console.log('ayup');
+    console.log('\n', 'Add department:', '\n'); 
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the department name?',
+                name: 'newDept'
+            }
+        ])
+        .then((res) => {
+            // console.log(res.newDept);
+            // db.query(`INSERT INTO departments (department_name) VALUES ("${res.newDept}");`);
+            db.query("INSERT INTO departments (department_name) VALUES (?)", [res.newDept], (err, res) => {
+                if (err) throw err;
+            })
+            console.log( '\n', `${res.newDept} has been added.`, '\n');
+            whatNext();
+        })
+    
 };
+
 // funtion to add a role
 function addRole() {
     console.log('ayup');

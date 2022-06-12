@@ -2,18 +2,22 @@
 
 set up console.tables?????
 
-use inquire to set up cli to promt user
-    view all departments
+>>require all packages in cli
+
+>>connect db to cli
+
+>use inquire to set up cli to promt user
+    >>view all departments
         console.table with
             dept names 
             dept ids
-    view all roles
+    >>view all roles
         console.table with
             job title
             role id
             owning dept
             salary
-    view all employees
+    >>view all employees
         console.table with
             employee id
             first name
@@ -73,3 +77,8 @@ use inquire to set up cli to promt user
             reference to employee.id of manager - null if none
 
 >>seed db
+
+
+icebox
+    make add stuff unique only
+    make not null work on departments
