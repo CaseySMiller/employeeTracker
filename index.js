@@ -303,7 +303,88 @@ async function addEmp() {
 
 
 // function to update an employees role
-function updateEmpRole() {
-    console.log('ayup');
+async function updateEmpRole() {
+    // request role info
+    let roleProm = new Promise ((resolve, reject) => {
+        const arr = [];
+        db.query("SELECT id, title FROM roles;", (err, res) => {
+            if(err) throw err;
+            // push roles to an array
+            res.forEach(obj => {
+                const roleObj = {};
+                roleObj.id = obj.id;
+                roleObj.title = obj.title;
+                arr.push(roleObj);
+            })
+            resolve(arr);
+        })
+    });
+    // request employee info
+    let empProm = new Promise ((resolve, reject) => {
+        const arr = [];
+        db.query("SELECT id, first_name, last_name FROM employees;", (err, res) => {
+            if(err) throw err;
+            // push employee full names and ids to an array
+            res.forEach(obj => {
+                const mgrObj = {};
+                let fullName = obj.first_name + " " + obj.last_name
+                mgrObj.id = obj.id;
+                mgrObj.name = fullName;
+                arr.push(mgrObj);
+            })
+            resolve(arr);
+        })
+    });
+    // assign arrays once db requests resolve
+    roleArray = await roleProm;
+    empArray = await empProm;
+    // seperate names from arrays
+    const roleNames = [];
+    roleArray.forEach( obj => {
+        roleNames.push(obj.title);
+    });
+    const empNames = [];
+    empArray.forEach( obj => {
+        empNames.push(obj.name);
+    });
+
+        // promt user for employee and new role
+        inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Choose an employee to update',
+                choices: empNames,
+                name: 'empName'
+            },
+            {
+                type: 'list',
+                message: 'Choose a new role for the new employee',
+                choices: roleNames,
+                name: 'roleName'
+            },
+        ])
+        .then((res) => {
+            // assign id to chosen role
+            let roleID = 0;
+            roleArray.forEach(obj => {
+                if (res.roleName == obj.title) {
+                    roleID = obj.id;
+                }
+            })
+            // assign id for chosen employee
+            let empID = 0;
+            empArray.forEach(obj => {
+                if (res.empName == obj.name) {
+                    empID = obj.id;
+                }
+            })
+    
+            db.query(`UPDATE employees SET role_id = ? WHERE id = ?`, [roleID, empID], (err, res) => {
+                if (err) throw err;
+                console.log( '\n', 'Employee successfully updated', '\n');
+                whatNext();
+            })
+        })
+    
 };
 
