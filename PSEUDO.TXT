@@ -28,7 +28,7 @@ set up console.tables?????
             manager
     >>add a department
         inquirer to prompt for name of dept
-    add a role
+    >>add a role
         inquirer to prompt for role's
             name
             salary

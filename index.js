@@ -184,7 +184,7 @@ function addRole() {
                 name: 'deptName'
             }
         ])
-        .then(async function f(res) {
+        .then(async function (res) {
                 let promise = new Promise ((resolve, reject) => {
                     db.query(`SELECT id FROM departments WHERE department_name = "${res.deptName}"`, (err, res) => {
                         if(err) throw err;
@@ -193,7 +193,6 @@ function addRole() {
                 });
 
                 newDeptId = await promise;
-                console.log (newDeptId);
                 db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [res.newName, res.newSalary, newDeptId], (err, res) => {
                     if (err) throw err;
                     console.log('Add role successful');
@@ -207,9 +206,102 @@ function addRole() {
 };
 
 // function to add employee
-function addEmp() {
-    console.log('ayup');
+async function addEmp() {
+    // request role info
+    let roleProm = new Promise ((resolve, reject) => {
+        const arr = [];
+        db.query("SELECT id, title FROM roles;", (err, res) => {
+            if(err) throw err;
+            // push roles to an array
+            res.forEach(obj => {
+                const roleObj = {};
+                roleObj.id = obj.id;
+                roleObj.title = obj.title;
+                arr.push(roleObj);
+            })
+            resolve(arr);
+        })
+    });
+    // request employee info
+    let empProm = new Promise ((resolve, reject) => {
+        const arr = [];
+        db.query("SELECT id, first_name, last_name FROM employees;", (err, res) => {
+            if(err) throw err;
+            // push employee full names and ids to an array
+            res.forEach(obj => {
+                const mgrObj = {};
+                let fullName = obj.first_name + " " + obj.last_name
+                mgrObj.id = obj.id;
+                mgrObj.name = fullName;
+                arr.push(mgrObj);
+            })
+            resolve(arr);
+        })
+    });
+    // assign arrays once db requests resolve
+    roleArray = await roleProm;
+    empArray = await empProm;
+    // seperate names from arrays
+    const roleNames = [];
+    roleArray.forEach( obj => {
+        roleNames.push(obj.title);
+    });
+    const empNames = [];
+    empArray.forEach( obj => {
+        empNames.push(obj.name);
+    });
+
+    // promt user for info
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: "Enter the new employee's first name",
+            name: 'newFirstName'
+        },
+        {
+            type: 'input',
+            message: "Enter the new employee's last name",
+            name: 'newLastName'
+        },
+        {
+            type: 'list',
+            message: 'Choose a role for the new employee',
+            choices: roleNames,
+            name: 'roleName'
+        },
+        {
+            type: 'list',
+            message: 'Choose a manager for the new employee',
+            choices: empNames,
+            name: 'mgrName'
+        }
+    ])
+    .then((res) => {
+        // assign id to chosen role
+        let roleID = 0;
+        roleArray.forEach(obj => {
+            if (res.roleName == obj.title) {
+                roleID = obj.id;
+            }
+        })
+        // assign id for chosen manager
+        let mgrID = 0;
+        empArray.forEach(obj => {
+            if (res.mgrName == obj.name) {
+                mgrID = obj.id;
+            }
+        })
+
+        db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [res.newFirstName, res.newLastName, roleID, mgrID], (err, res) => {
+            if (err) throw err;
+            console.log( '\n', 'Employee successfully added', '\n');
+            whatNext();
+        })
+    })
+
 };
+
+
 // function to update an employees role
 function updateEmpRole() {
     console.log('ayup');
